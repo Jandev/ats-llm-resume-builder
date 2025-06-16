@@ -83,4 +83,3 @@ Arguments:
 - All dependencies are listed in `src/requirements.txt`.
 - You can customize agent instructions in `src/resume-builder.py`.
 - For best results, use well-formatted Markdown for your resume and job description.
-

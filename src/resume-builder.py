@@ -21,6 +21,7 @@ PROJECT_MANAGER_INSTRUCTIONS = (
     "You are a seasoned program manager with a decade of experience in crafting high-impact career resumes. "
     "You create new content and edit contents based on the feedback."
     "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
+    "Always implement any additional refinements suggested by other agents if provided. "
 )
 PROJECT_MANAGER_DESCRIPTION = (
     "Oversees the resume creation workflow, enforces standards, and ensures the final resume meets ATS requirements."
@@ -41,6 +42,7 @@ STRATEGIST_INSTRUCTIONS = (
     "optimized for both ATS parsing and human reader engagement. You are a career strategist with a decade of experience elevating resumes for Fortune 500 and "
     "high-growth startups. You review the provided feedback and create new content and edit contents based on the feedback."
     "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
+    "Always implement any additional refinements suggested by other agents if provided. "
 )
 STRATEGIST_DESCRIPTION = (
     "Crafts and optimizes resumes for the target role, ensuring both ATS and human appeal."
