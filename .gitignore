@@ -31,3 +31,4 @@ excluded/
 venv/
 
 .env
+docs/entire-conversation.md
