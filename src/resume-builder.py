@@ -131,6 +131,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Multi-agent resume optimizer")
     parser.add_argument('--resume', type=str, default='./docs/resume.md', help='Path to the resume markdown file')
     parser.add_argument('--jobdesc', type=str, default='./docs/sample/job-description.md', help='Path to the job description markdown file')
+    parser.add_argument('--output', type=str, default='./docs/entire-conversation.md', help='Path to the output conversation markdown file')
     args = parser.parse_args()
 
     # 1. Create a group chat orchestration with a round robin manager
@@ -161,10 +162,10 @@ async def main():
     print(result_entry)
     conversation_log.append(result_entry)
 
-    # Write the entire conversation to docs/entire-conversation.md
-    with open('./docs/entire-conversation.md', 'w', encoding='utf-8') as f:
+    # Write the entire conversation to the specified output file
+    with open(args.output, 'w', encoding='utf-8') as f:
         f.writelines(conversation_log)
-    print("Entire conversation saved to ./docs/entire-conversation.md")
+    print(f"Entire conversation saved to {args.output}")
 
     # 5. Stop the runtime after the invocation is complete
     await runtime.stop_when_idle()

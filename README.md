@@ -56,20 +56,23 @@ From the project root, you can run the script with default input files:
 python ./src/resume-builder.py
 ```
 
-Or specify custom input files using command-line arguments:
+
+Or specify custom input and output files using command-line arguments:
 
 ```bash
-python ./src/resume-builder.py --resume path/to/your-resume.md --jobdesc path/to/job-description.md
+python ./src/resume-builder.py --resume path/to/your-resume.md --jobdesc path/to/job-description.md --output path/to/output-conversation.md
 ```
 
 Arguments:
 
-- `--resume` : Path to the resume markdown file (default: `../docs/resume.md`)
-- `--jobdesc` : Path to the job description markdown file (default: `../docs/sample/job-description.md`)
+- `--resume` : Path to the resume markdown file (default: `./docs/resume.md`)
+- `--jobdesc` : Path to the job description markdown file (default: `./docs/sample/job-description.md`)
+- `--output` : Path to the output conversation markdown file (default: `./docs/entire-conversation.md`)
+
 
 ## 7. Output
 
-- The optimized resume and the full agent conversation will be saved to `./docs/entire-conversation.md`.
+- The optimized resume and the full agent conversation will be saved to the file specified by `--output` (default: `./docs/entire-conversation.md`).
 - Review this file for the final result and the reasoning process.
 
 ## Troubleshooting
