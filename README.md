@@ -48,6 +48,23 @@ AZURE_OPENAI_API_VERSION=2024-02-15-preview
 - Place your resume in Markdown format at `./docs/resume.md`.
 - Place the job description at `./docs/sample/job-description.md` (or update the script to point to your file).
 
+### Sample Files
+
+The project includes sample files in both English and Dutch:
+
+**English samples:**
+- Resume: `./docs/resume.md`
+- Job Description: `./docs/sample/job-description.md`
+
+**Dutch samples:**
+- Resume: `./docs/sample/resume-nl.md`
+- Job Description: `./docs/sample/job-description-nl.md`
+
+To test with Dutch samples:
+```bash
+python ./src/resume-builder.py --resume ./docs/sample/resume-nl.md --jobdesc ./docs/sample/job-description-nl.md --language nl
+```
+
 ## 6. Run the Script
 
 From the project root, you can run the script with default input files:
@@ -60,7 +77,7 @@ python ./src/resume-builder.py
 Or specify custom input and output files using command-line arguments:
 
 ```bash
-python ./src/resume-builder.py --resume path/to/your-resume.md --jobdesc path/to/job-description.md --output path/to/output-conversation.md
+python ./src/resume-builder.py --resume path/to/your-resume.md --jobdesc path/to/job-description.md --output path/to/output-conversation.md --language en
 ```
 
 Arguments:
@@ -68,6 +85,25 @@ Arguments:
 - `--resume` : Path to the resume markdown file (default: `./docs/resume.md`)
 - `--jobdesc` : Path to the job description markdown file (default: `./docs/sample/job-description.md`)
 - `--output` : Path to the output conversation markdown file (default: `./docs/entire-conversation.md`)
+- `--language` : Language for resume generation - `en` for English (default) or `nl` for Dutch
+
+## Language Support
+
+The application supports generating resumes in two languages:
+
+- **English** (`--language en`) - Default language
+- **Dutch** (`--language nl`) - All agent communications and the generated resume will be in Dutch
+
+Example for Dutch resume generation:
+
+```bash
+python ./src/resume-builder.py --language nl
+```
+
+When using Dutch mode, all agents will:
+- Analyze the job description and provide feedback in Dutch
+- Generate the resume content in Dutch
+- Provide all communications and scoring analysis in Dutch
 
 
 ## 7. Output

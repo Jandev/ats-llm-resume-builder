@@ -15,35 +15,60 @@ The agents will iterate through the resume creation process until the desired sc
 """
 
 # === Agent Instructions and Descriptions ===
-PROJECT_MANAGER_INSTRUCTIONS = (
-    "Oversee multi-agent workflows, enforce standards, and make sure the new resume scores more than 85% on the necessary keywords. "
-    "If the newly created resume scores less than 85%, ask the agents to repeat the process until 85% or more is reached. "
-    "You are a seasoned program manager with a decade of experience in crafting high-impact career resumes. "
-    "You create new content and edit contents based on the feedback."
-    "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
-    "Always implement any additional refinements suggested by other agents if provided. "
-)
+def get_project_manager_instructions(language="en"):
+    language_instruction = ""
+    if language == "nl":
+        language_instruction = "Generate the resume and provide all communication in Dutch (Nederlands). "
+    elif language == "en":
+        language_instruction = "Generate the resume and provide all communication in English. "
+    
+    return (
+        f"{language_instruction}"
+        "Oversee multi-agent workflows, enforce standards, and make sure the new resume scores more than 85% on the necessary keywords. "
+        "If the newly created resume scores less than 85%, ask the agents to repeat the process until 85% or more is reached. "
+        "You are a seasoned program manager with a decade of experience in crafting high-impact career resumes. "
+        "You create new content and edit contents based on the feedback."
+        "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
+        "Always implement any additional refinements suggested by other agents if provided. "
+    )
 PROJECT_MANAGER_DESCRIPTION = (
     "Oversees the resume creation workflow, enforces standards, and ensures the final resume meets ATS requirements."
 )
 
-JOB_MARKET_ANALYST_INSTRUCTIONS = (
-    "Conduct deep analyses of technical job postings—extract core requirements, uncover implicit employer priorities, benchmark against industry standards, "
-    "and surface actionable insights to optimize application strategies. You are a veteran labor market intelligence specialist with a track record in parsing "
-    "thousands of engineering job descriptions. You review the content and provide feedback to the project manager."
-    "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
-)
+def get_job_market_analyst_instructions(language="en"):
+    language_instruction = ""
+    if language == "nl":
+        language_instruction = "Provide all analysis and feedback in Dutch (Nederlands). "
+    elif language == "en":
+        language_instruction = "Provide all analysis and feedback in English. "
+    
+    return (
+        f"{language_instruction}"
+        "Conduct deep analyses of technical job postings—extract core requirements, uncover implicit employer priorities, benchmark against industry standards, "
+        "and surface actionable insights to optimize application strategies. You are a veteran labor market intelligence specialist with a track record in parsing "
+        "thousands of engineering job descriptions. You review the content and provide feedback to the project manager."
+        "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
+    )
+
 JOB_MARKET_ANALYST_DESCRIPTION = (
     "Analyzes job postings, extracts key requirements, and provides actionable insights for resume optimization."
 )
 
-STRATEGIST_INSTRUCTIONS = (
-    "You are a Senior Curriculum Vitae Strategist. Transform raw candidate data into a laser-focused, accomplishment-driven resume—tailored for the target role, "
-    "optimized for both ATS parsing and human reader engagement. You are a career strategist with a decade of experience elevating resumes for Fortune 500 and "
-    "high-growth startups. You review the provided feedback and create new content and edit contents based on the feedback."
-    "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
-    "Always implement any additional refinements suggested by other agents if provided. "
-)
+def get_strategist_instructions(language="en"):
+    language_instruction = ""
+    if language == "nl":
+        language_instruction = "Create and provide all content in Dutch (Nederlands). "
+    elif language == "en":
+        language_instruction = "Create and provide all content in English. "
+    
+    return (
+        f"{language_instruction}"
+        "You are a Senior Curriculum Vitae Strategist. Transform raw candidate data into a laser-focused, accomplishment-driven resume—tailored for the target role, "
+        "optimized for both ATS parsing and human reader engagement. You are a career strategist with a decade of experience elevating resumes for Fortune 500 and "
+        "high-growth startups. You review the provided feedback and create new content and edit contents based on the feedback."
+        "Do not ask for additional information, just use the provided resume and job description to create a new resume. "
+        "Always implement any additional refinements suggested by other agents if provided. "
+    )
 STRATEGIST_DESCRIPTION = (
     "Crafts and optimizes resumes for the target role, ensuring both ATS and human appeal."
 )
@@ -59,24 +84,24 @@ def load_files(resume_path='../docs/resume.md', job_desc_path='../docs/sample/jo
         job_description = f.read()
     return original_resume, job_description
 
-def get_agents() -> list[Agent]:
+def get_agents(language="en") -> list[Agent]:
     """Return a list of agents that will participate in the group style discussion."""
     projectmanager = ChatCompletionAgent(
         name="ProjectManager",
         description=PROJECT_MANAGER_DESCRIPTION,
-        instructions=PROJECT_MANAGER_INSTRUCTIONS,
+        instructions=get_project_manager_instructions(language),
         service=AzureChatCompletion(),
     )
     jobmarketanalyst = ChatCompletionAgent(
         name="JobMarketAnalyst",
         description=JOB_MARKET_ANALYST_DESCRIPTION,
-        instructions=JOB_MARKET_ANALYST_INSTRUCTIONS,
+        instructions=get_job_market_analyst_instructions(language),
         service=AzureChatCompletion(),
     )
     strategist = ChatCompletionAgent(
         name="Strategist",
         description=STRATEGIST_DESCRIPTION,
-        instructions=STRATEGIST_INSTRUCTIONS,
+        instructions=get_strategist_instructions(language),
         service=AzureChatCompletion(),
     )
     # The order of the agents in the list will be the order in which they will be picked by the round robin manager
@@ -89,8 +114,19 @@ def agent_response_callback(message: ChatMessageContent) -> None:
     conversation_log.append(entry)
 
 
-def get_instructions(job_description, original_resume):
+def get_instructions(job_description, original_resume, language="en"):
+    language_instruction = ""
+    if language == "nl":
+        language_instruction = """
+**IMPORTANT: All output must be in Dutch (Nederlands). Generate the resume content, analysis, and all communication in Dutch.**
+"""
+    elif language == "en":
+        language_instruction = """
+**IMPORTANT: All output must be in English. Generate the resume content, analysis, and all communication in English.**
+"""
+    
     return f"""
+{language_instruction}
 Compile a comprehensive personal and professional profile using the provided resume.
 
 1. Craft a new resume based on the old one and the suggestions from the previous task 
@@ -132,10 +168,12 @@ async def main():
     parser.add_argument('--resume', type=str, default='./docs/resume.md', help='Path to the resume markdown file')
     parser.add_argument('--jobdesc', type=str, default='./docs/sample/job-description.md', help='Path to the job description markdown file')
     parser.add_argument('--output', type=str, default='./docs/entire-conversation.md', help='Path to the output conversation markdown file')
+    parser.add_argument('--language', type=str, choices=['en', 'nl'], default='en', 
+                       help='Language for the resume generation: en (English) or nl (Dutch)')
     args = parser.parse_args()
 
     # 1. Create a group chat orchestration with a round robin manager
-    agents = get_agents()
+    agents = get_agents(args.language)
     group_chat_orchestration = GroupChatOrchestration(
         members=agents,
         # max_rounds is odd, so that the project manager gets the last round
@@ -150,7 +188,7 @@ async def main():
     runtime.start()
 
     # 3. Invoke the orchestration with a task and the runtime
-    task = get_instructions(job_description, original_resume)
+    task = get_instructions(job_description, original_resume, args.language)
     orchestration_result = await group_chat_orchestration.invoke(
         task=task,
         runtime=runtime,
